@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Contacts</h1>
+        <input type="file" id="fileInput" accept=".csv" />
+        <button id="uploadButton">Upload CSV</button>
+        <br />
+        <input type="text" id="searchInput" placeholder="Search..." />
+        <table id="peopleTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('Name')">Name</th>
+                    <th onclick="sortTable('DateOfBirth')">Date of Birth</th>
+                    <th onclick="sortTable('Married')">Married</th>
+                    <th onclick="sortTable('Phone')">Phone</th>
+                    <th onclick="sortTable('Salary')">Salary</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -43,7 +43,7 @@ namespace ReactCRUD.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{phone}")]
         public async Task<IActionResult> Delete(string phone)
         {
             await _personManager.Delete(phone);
