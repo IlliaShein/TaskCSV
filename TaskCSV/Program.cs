@@ -1,3 +1,8 @@
+using TaskCSV.Interfaces;
+using TaskCSV.Middlewares;
+using DbLib.Models.EntityFramework;
+using Microsoft.EntityFrameworkCore;
+using TaskCSV.Managers;
 
 namespace TaskCSV
 {
@@ -7,26 +12,49 @@ namespace TaskCSV
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            const string corsPolicyName = "Cors";
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors(
+                option => option
+                .AddPolicy(corsPolicyName,
+                    corsPolicy => corsPolicy
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()));
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDbContext<MyDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            builder.Services.AddScoped<IPersonManager, PersonManager>();
+
+            builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            app.UseErrorHandling();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
+            var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+            dbContext.Database.Migrate();
+
+            app.UseCors(corsPolicyName);
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
+            app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller}/{action=Index}/{id?}");
 
             app.MapControllers();
 
